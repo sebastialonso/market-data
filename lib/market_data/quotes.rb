@@ -20,7 +20,7 @@ module MarketData
       end
     end
     
-    def fetch(symbol, w52 = false)
+    def quote(symbol, w52 = false)
       path_hash = { host: MarketData.base_host, path: @@single + symbol }
         if w52
           path_hash[:query] = URI.encode_www_form({"52week" => true })
@@ -30,15 +30,18 @@ module MarketData
     end
 
     def bulk_quotes(symbols, snapshot = false)
-      unless symbols.is_a?(Array) && symbols.size > 1
-        raise BadParameterError.new("symbols must be a non-empty list")
-      end
-
       path_hash = { host: MarketData.base_host, path: @@bulk  }
-      query_hash = { symbols: symbols.join(",") }
+      query_hash = {}
+      
       if snapshot
         query_hash[:snapshot] = true
+      else
+        unless symbols.is_a?(Array) && symbols.size > 1
+          raise BadParameterError.new("symbols must be a non-empty list")
+        end
+        query_hash = { symbols: symbols.join(",") }
       end
+      
       path_hash[:query] = URI.encode_www_form(query_hash)
 
       res = do_connect(get_uri path_hash)
@@ -48,7 +51,6 @@ module MarketData
     def self.map_quotes(quotes)
       h = Hash.new
       size = quotes[SYMBOL_RESPONSE_KEY].size
-      p size
       for i in 0..(size - 1) do
         qquote = Quote.new(*quotes.except(STATUS_RESPONSE_KEY).values.map { |ar| ar[i] })
         h[quotes[SYMBOL_RESPONSE_KEY][i]] = !qquote.blank? ? qquote : nil
