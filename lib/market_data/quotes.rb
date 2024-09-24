@@ -36,7 +36,7 @@ module MarketData
       if snapshot
         query_hash[:snapshot] = true
       else
-        unless symbols.is_a?(Array) && symbols.size > 1
+        if not symbols.is_a?(Array) || symbols.size < 1
           raise BadParameterError.new("symbols must be a non-empty list")
         end
         query_hash = { symbols: symbols.join(",") }
