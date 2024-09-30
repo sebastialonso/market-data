@@ -13,3 +13,10 @@
 
 - Change validations for bulk_quotes method
 - Add `token` method to `Client` class
+
+## [0.2.0] - 2024-09-30
+
+- Internal rework of code. New modules for models, mappers, constants and errors
+- Introduced unit tests for almost all modules.
+- Introduced coverage. Currently at 85%
+- Add functionality for [Candles](https://www.marketdata.app/docs/api/stocks/candles) and [Bulk Candles](https://www.marketdata.app/docs/api/stocks/bulkcandles) endpoints

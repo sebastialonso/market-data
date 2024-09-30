@@ -1,13 +1,23 @@
 PATH
   remote: .
   specs:
-    market_data (0.1.0)
+    market_data (0.1.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    docile (1.4.1)
     minitest (5.16.3)
+    mocha (2.4.5)
+      ruby2_keywords (>= 0.0.5)
     rake (13.0.6)
+    ruby2_keywords (0.0.5)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.1)
+    simplecov_json_formatter (0.1.4)
 
 PLATFORMS
   arm64-darwin-23
@@ -15,7 +25,9 @@ PLATFORMS
 DEPENDENCIES
   market_data!
   minitest (~> 5.0)
+  mocha
   rake (~> 13.0)
+  simplecov
 
 BUNDLED WITH
    2.4.1

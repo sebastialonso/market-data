@@ -1,34 +1,54 @@
 # MarketData
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/market_data`. To experiment with that code, run `bin/console` for an interactive prompt.
+A Ruby wrapper for the [MarketData API](https://www.marketdata.app/docs/api).
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+    $ gem install market-data
+    $ bundle install
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ client = MarketData.Client.new "YOUR_API_TOKEN"
+    $ client.quote("AAPL")
+    $ => <struct MarketData::Models::Quote symbol="AAPL", ask=231.42, askSize=2, bid=231.4, .....
 
-## Development
+## ROADMAP
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+The following is an ordered list of next expected developments, based on the endpoints present in the [docs](https://www.marketdata.app/docs/api)
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+From Stocks endpoints:
+- [X] Stocks
+- [X] Bulk Stocks
+- [X] Candles
+- [X] Bulk Candles
+- [X] Support for optional parameters for Bulk Candles
+- [] Earnings
 
+From Markets endpoints:
+- [] Status
+
+From Indices endpoints:
+- [] Quotes
+- [] Candles
+
+From Stocks endpoints:
+- [] Support for optional parameters for Candles
+- [] Support for optional parameters for Bulk Candles
+
+
+## Tests
+
+Run tests with
+
+    $ rake 
+
+To run tests and check coverage
+
+    $  rake && open coverage/index.html 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/market_data. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/market_data/blob/main/CODE_OF_CONDUCT.md).
+Leave an issue or contact me at sebagonz91@gmail.com
 
 ## License
 

@@ -13,10 +13,6 @@ module MarketData
     def initialize token
       @access_token = token
     end
-
-    def token
-      @access_token
-    end
   end
 
   def self.base_host
