@@ -4,7 +4,7 @@ A Ruby wrapper for the [MarketData API](https://www.marketdata.app/docs/api).
 
 ## Installation
 
-    $ gem install market-data
+    $ gem install market_data
     $ bundle install
 
 ## Usage
