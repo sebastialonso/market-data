@@ -20,3 +20,8 @@
 - Introduced unit tests for almost all modules.
 - Introduced coverage. Currently at 85%
 - Add functionality for [Candles](https://www.marketdata.app/docs/api/stocks/candles) and [Bulk Candles](https://www.marketdata.app/docs/api/stocks/bulkcandles) endpoints
+
+## [0.2.1] - 2024-10-09
+
+- Fix broken tests
+- Add support for new optional parameters for `quotes` and `bulk_quotes` endpoint

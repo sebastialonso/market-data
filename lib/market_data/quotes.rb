@@ -13,28 +13,40 @@ module MarketData
     @@candles = "/v1/stocks/candles/"
     @@bulk_candles = "/v1/stocks/bulkcandles/"
 
-    def quote(symbol, w52 = false)
+    def quote(symbol, w52 = false, extended = false)
       path_hash = { host: MarketData.base_host, path: @@single + symbol }
+      query_hash = {}
       if w52
-        path_hash[:query] = URI.encode_www_form({"52week" => true })
+        query_hash["52week"] = true
+      end
+      # MarketData API considers extended as true by default
+      if !extended
+        query_hash[:extended] = false
+      end
+      if !query_hash.empty?
+        path_hash[:query] = URI.encode_www_form(query_hash)
       end
       res = do_connect(get_uri path_hash)
       map_quote(res)
     end
 
-    def bulk_quotes(symbols, snapshot = false)
+    def bulk_quotes(symbols, snapshot = false, extended = false)
       path_hash = { host: MarketData.base_host, path: @@bulk  }
       query_hash = {}
       
+      # MarketData API considers extended as true by default
+      if !extended
+        query_hash[:extended] = false
+      end
+
       if snapshot
         query_hash[:snapshot] = true
       else
         if !symbols.is_a?(Array) || symbols.size < 1
           raise BadParameterError.new("symbols must be a non-empty list")
         end
-        query_hash = { symbols: symbols.join(",") }
+        query_hash[:symbols] = symbols.join(",")
       end
-      
       path_hash[:query] = URI.encode_www_form(query_hash)
 
       res = do_connect(get_uri path_hash)
