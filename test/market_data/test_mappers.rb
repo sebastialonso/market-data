@@ -136,5 +136,18 @@ module MarketData
       assert_equal response["low52"][0], actual[:low52]
       refute actual.key? :not_registered_field
     end
+
+    def test_map_market_status
+      response = {
+        "s" => "ok",
+        "date" => ["2024-10-11"],
+        "status" => ["open"]
+      }
+
+      actual = map_market_status response
+      assert_kind_of MarketData::Models::MarketStatus, actual
+      assert_equal response["date"][0], actual[:date]
+      assert_equal response["status"][0], actual[:status]
+    end
   end
 end

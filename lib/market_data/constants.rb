@@ -47,5 +47,9 @@ module MarketData
       high52: "high52",
       low52: "low52",
     }
+    MARKET_STATUS_FIELD_MAPPING = {
+      date: "date",
+      status: "status"
+    }
   end
 end

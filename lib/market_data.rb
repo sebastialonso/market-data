@@ -2,13 +2,14 @@
 
 require_relative "market_data/version"
 require "market_data/quotes"
+require "market_data/markets"
 
 module MarketData
   @@base_host = "api.marketdata.app"
   
   class Client
     include MarketData::Quotes
-    # include MarketData::Index
+    include MarketData::Markets
 
     def initialize token
       @access_token = token

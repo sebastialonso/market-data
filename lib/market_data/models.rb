@@ -15,5 +15,6 @@ module MarketData
     end
 
     Earning = Struct.new(*Constants::EARNING_FIELD_MAPPING.keys)
+    MarketStatus = Struct.new(*Constants::MARKET_STATUS_FIELD_MAPPING.keys)
   end
 end

@@ -96,6 +96,34 @@ module MarketData
       end
     end
 
+    def test_validate_market_status_input_raises_from_invalid_from_to_countack_strategy
+      @s.expects(:validate_from_to_countback_strategy).returns(@invalid_validation)
+
+      assert_raises(BadParameterError) { @s.validate_market_status_input!(**@ftc) }
+    end
+
+    def test_validate_market_status_input_returns_with_from_to_countback_strategy
+      actual = @s.validate_market_status_input!(**@ftc)
+
+      assert_equal @ftc[:from], actual[:from]
+      assert_equal @ftc[:to], actual[:to]
+    end
+
+    def test_validate_market_status_input_returns_with_no_argument
+      actual = @s.validate_market_status_input!()
+
+      assert_empty actual
+    end
+
+    def test_validate_market_status_input_returns_with_date
+      args = {country: "US", date: Time.now.iso8601}
+      actual = @s.validate_market_status_input!(**args)
+
+      assert_equal args[:country], actual[:country]
+      assert_equal args[:date], actual[:date]
+      refute args.key? :to
+    end
+
     def test_time_valid_with_valid_string
       refute time_valid?("adas")
       refute time_valid?(Time.now.strftime("Printed on %m/%d/%Y") )

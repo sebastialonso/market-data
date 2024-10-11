@@ -1,5 +1,4 @@
 require "test_helper"
-require 'market_data/mappers'
 
 module MarketData
   class TestQuotes < Minitest::Test

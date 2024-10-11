@@ -47,6 +47,13 @@ module MarketData
       ar
     end
 
+    def map_market_status response
+      MarketData::Models::MarketStatus.new(
+        date: response["date"][0],
+        status: response["status"][0],
+      )
+    end
+
     def map_fields_for(response, kind, i=0)
       mapping = {}
       case kind

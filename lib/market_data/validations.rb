@@ -56,10 +56,7 @@ module MarketData
       r.merge({symbols: symbols.join(",")})
     end
 
-    def validate_candles_input!(
-      resolution: nil, from: nil, to: nil, countback: nil
-    )
-
+    def validate_candles_input!(resolution: nil, from: nil, to: nil, countback: nil)
       state, response = validate_from_to_countback_strategy(from: from, to: to, countback: countback)
       if state == :invalid
         raise BadParameterError.new(response)
@@ -73,9 +70,7 @@ module MarketData
       response.merge(res)
     end
     
-    def validate_earnings_input!(
-      from: nil, to: nil, countback: nil, date: nil, report: nil
-    )
+    def validate_earnings_input!(from: nil, to: nil, countback: nil, date: nil, report: nil)
       if !date.nil?
         return {date: date}
       end
@@ -89,6 +84,34 @@ module MarketData
       end
 
       return response
+    end
+
+    def validate_market_status_input!(country: nil, date: nil, from: nil, to: nil, countback: nil)
+      result = {}
+
+      if [country, date, from, to, countback].all? { |x| x.nil? }
+        return result
+      end
+
+      if !country.nil?
+        result.merge!({country: country})  
+      end
+      
+      if !date.nil?
+        # date has higher priority than from-to-countback
+        return result.merge({date: date})
+      end
+
+      if [from, to, countback].all? { |x| x.nil? }
+        return result
+      else
+        state, response = validate_from_to_countback_strategy(from: from, to: to, countback: countback)
+        if state == :invalid
+          raise BadParameterError.new(response)
+        end
+      end
+
+      return result.merge(response)
     end
 
     def validate_from_to_countback_strategy(
