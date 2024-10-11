@@ -1,53 +1,38 @@
 require 'market_data/conn'
 require 'market_data/errors'
 require 'market_data/mappers'
+require 'market_data/validations'
 
 module MarketData
   module Quotes
     include MarketData::Mappers
     include MarketData::Errors
     include MarketData::Conn
+    include MarketData::Validations
 
     @@single = "/v1/stocks/quotes/"
     @@bulk = "/v1/stocks/bulkquotes/"
     @@candles = "/v1/stocks/candles/"
     @@bulk_candles = "/v1/stocks/bulkcandles/"
+    @@earnings = "/v1/stocks/earnings/"
 
     def quote(symbol, w52 = false, extended = false)
+      query = validate_quotes_input!(symbol: symbol, w52: w52, extended: extended)
+      
       path_hash = { host: MarketData.base_host, path: @@single + symbol }
-      query_hash = {}
-      if w52
-        query_hash["52week"] = true
+      if !query.empty?
+        path_hash[:query] = URI.encode_www_form(query)
       end
-      # MarketData API considers extended as true by default
-      if !extended
-        query_hash[:extended] = false
-      end
-      if !query_hash.empty?
-        path_hash[:query] = URI.encode_www_form(query_hash)
-      end
+      
       res = do_connect(get_uri path_hash)
       map_quote(res)
     end
 
     def bulk_quotes(symbols, snapshot = false, extended = false)
-      path_hash = { host: MarketData.base_host, path: @@bulk  }
-      query_hash = {}
+      query = validate_bulk_quotes_input!(symbols: symbols, snapshot: snapshot, extended: extended)
       
-      # MarketData API considers extended as true by default
-      if !extended
-        query_hash[:extended] = false
-      end
-
-      if snapshot
-        query_hash[:snapshot] = true
-      else
-        if !symbols.is_a?(Array) || symbols.size < 1
-          raise BadParameterError.new("symbols must be a non-empty list")
-        end
-        query_hash[:symbols] = symbols.join(",")
-      end
-      path_hash[:query] = URI.encode_www_form(query_hash)
+      path_hash = { host: MarketData.base_host, path: @@bulk  }
+      path_hash[:query] = URI.encode_www_form(query)
 
       res = do_connect(get_uri path_hash)
       map_bulk_quotes res
@@ -56,43 +41,33 @@ module MarketData
     def candles(symbol, opts = {})
       defaults = {resolution: "D", from: nil, to: Time.now.utc.to_i, countback: nil}
       opts = defaults.merge(opts)
-      
-      query_hash = {to: opts[:to]}
-    
-      # TODO Move method validations into own class
-      # TODO check to is either iso8601 or unix
-      if opts[:from].nil? && opts[:countback].nil?
-        raise BadParameterError.new("either :from or :countback must be supplied")
-      end
-
-      if opts[:from].nil?
-        query_hash[:countback] = opts[:countback]
-      else
-        query_hash[:from] = opts[:from]
-      end
+      query =  validate_candles_input!(**opts)
       
       path_hash = { host: MarketData.base_host, path: @@candles + opts[:resolution] + "/" + symbol }
-      path_hash[:query] = URI.encode_www_form(query_hash)
+      path_hash[:query] = URI.encode_www_form(query)
       
       res = do_connect(get_uri path_hash)
       map_candles res, symbol
     end
 
     def bulk_candles(symbols, resolution = "D")
-      unless resolution == "daily" || resolution == "1D" || resolution == "D"
-        raise BadParameterError.new("only daily resolution is allowed for this endpoint")
-      end
-      path_hash = { host: MarketData.base_host, path: @@bulk_candles + resolution + "/" }
+      query = validate_bulk_candles_input!(symbols: symbols, resolution: resolution)
+      query = query.except(:resolution)
       
-      if !symbols.is_a?(Array) || symbols.size < 1
-        raise BadParameterError.new("symbols must be a non-empty list")
-      end
-      query_hash = { symbols: symbols.join(",") }
-
-      path_hash[:query] = URI.encode_www_form(query_hash)
-
+      path_hash = { host: MarketData.base_host, path: @@bulk_candles + resolution + "/" }
+      path_hash[:query] = URI.encode_www_form(query)
+      
       res = do_connect(get_uri path_hash)
       map_bulk_candles res
+    end
+
+    def earnings(symbol, opts = {from: nil, to: nil, countback: nil, date: nil, report: nil})
+      path_hash = { host: MarketData.base_host(), path: @@earnings + symbol}
+      query = validate_earnings_input!(**opts)
+      path_hash[:query] = URI.encode_www_form(query)
+
+      res = do_connect(get_uri path_hash)
+      map_earning res
     end
   end
 end

@@ -2,12 +2,11 @@
 
 A Ruby wrapper for the [MarketData API](https://www.marketdata.app/docs/api).
 
-![coverage](https://img.shields.io/badge/coverage%3A-84.71%25-yellow.svg)
+![coverage](https://img.shields.io/badge/coverage%3A-87.77%25-yellow.svg)
 
 ## Installation
 
     $ gem install market_data
-    $ bundle install
 
 ## Usage
 
@@ -93,7 +92,7 @@ For the `bulk_candles` method you pass a array of ticker symbols. Resolution is 
 
 It returns a hashmap with the ticker symbol as a key.
 
-        $ candles = cl.bulk_candles(["AAPL", "AMD", "NOTAQUOTE"])
+        $ candles = client.bulk_candles(["AAPL", "AMD", "NOTAQUOTE"])
 
         $ candles["AMD"]
         $ => #<struct MarketData::Models::Candle symbol="AMD", open=174.05, high=174.05, low=169.55, close=171.02, volume=33391035, time=1728446400>
@@ -102,6 +101,30 @@ It returns a hashmap with the ticker symbol as a key.
         $ candles["NOTAQUOTE"] => nil
 
 If a quote is not found, the hashmap will return a nil value for that ticker's key.
+
+### Earnings
+
+See the API [docs](https://www.marketdata.app/docs/api/stocks/earnings) for parameter specification.
+
+        $ client.earnings("AAPL", from: (Time.now - MarketData::Constants::YEAR).iso8601, to: Time.now.iso8601, countback: nil, report: nil, date: nil)
+        $ => [#<struct MarketData::Models::Earning
+            symbol="AAPL",
+            fiscal_year=2023,
+            fiscal_quarter=4,
+            date=1696046400,
+            report_date=1698897600,
+            report_time="after close",
+            currency="USD",
+            reported_eps=1.46,
+            estimated_eps=1.39,
+            surprise_eps=0.07,
+            surprise_eps_pct=0.0504,
+            updated=1728273600>,
+            #<struct MarketData::Models::Earning
+            symbol="AAPL",
+            fiscal_year=2024,
+            fiscal_quarter=1,
+            ...
 
 ## ROADMAP
 
@@ -113,7 +136,7 @@ From Stocks endpoints:
 - [X] Candles
 - [X] Bulk Candles
 - [X] Support for new optional parameters for Quotes and Bulk Quotes
-- [ ] Earnings
+- [X] Earnings
 
 From Markets endpoints:
 - [ ] Status

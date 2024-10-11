@@ -25,3 +25,8 @@
 
 - Fix broken tests
 - Add support for new optional parameters for `quotes` and `bulk_quotes` endpoint
+
+## [0.3.0] - 2024-10-09
+
+- Add support for Earnings endpoint under the `earnings` method
+- Introduced `Validations` module for parameter validation logic

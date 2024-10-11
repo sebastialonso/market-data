@@ -2,18 +2,18 @@ require 'market_data/constants'
 
 module MarketData
   module Models
-    include MarketData::Constants
-
-    Quote = Struct.new(*Constants::QUOTE_FIELDS) do
+    Quote = Struct.new(*Constants::QUOTE_FIELD_MAPPING.keys) do
       def blank?
-        (QUOTE_FIELDS - [:symbol]).all? { |mmethod| self[mmethod].nil?}
+        (Constants::QUOTE_FIELD_MAPPING.keys - [:symbol]).all? { |mmethod| self[mmethod].nil?}
       end
     end
 
-    Candle = Struct.new(*Constants::CANDLE_FIELDS) do
+    Candle = Struct.new(*Constants::CANDLE_FIELD_MAPPING.keys) do
       def blank?
-        (CANDLE_FIELDS - [:symbol]).all? { |mmethod| self[mmethod].nil?}
+        (Constants::CANDLE_FIELD_MAPPING.keys - [:symbol]).all? { |mmethod| self[mmethod].nil?}
       end
     end
+
+    Earning = Struct.new(*Constants::EARNING_FIELD_MAPPING.keys)
   end
 end
