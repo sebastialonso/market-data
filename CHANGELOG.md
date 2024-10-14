@@ -30,3 +30,7 @@
 
 - Add support for Earnings endpoint under the `earnings` method
 - Introduced `Validations` module for parameter validation logic
+
+## [0.4.0] - 2024-10-14
+
+- Add support for Markets status endpoint under the `market_status` method
