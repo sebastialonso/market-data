@@ -109,9 +109,20 @@ module MarketData
         if state == :invalid
           raise BadParameterError.new(response)
         end
-      end
 
-      return result.merge(response)
+        return result.merge(response)
+      end
+    end
+    
+    def validate_index_quote_input!(w52: nil)
+      if w52.nil? || !w52
+        return {}
+      end
+      {"52week" => w52}
+    end
+
+    def validate_index_candles_input!(resolution: nil, from: nil, to: nil, countback: nil)
+      validate_candles_input!(resolution: resolution, from: from, to: to, countback: countback)
     end
     
     def validate_index_quote_input!(w52: nil)

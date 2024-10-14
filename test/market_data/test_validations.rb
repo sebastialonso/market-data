@@ -109,9 +109,15 @@ module MarketData
       assert_equal @ftc[:to], actual[:to]
     end
 
-    def test_validate_market_status_input_returns_with_no_argument
-      actual = @s.validate_market_status_input!()
+    def test_validate_market_status_input_returns_with_no_from_to_countback_strategy
+      actual = @s.validate_market_status_input!(country: "US")
 
+      assert_equal 1, actual.keys.size
+      assert actual.key? :country
+    end
+
+    def test_validate_market_status_input_returns_with_no_arguments
+      actual = @s.validate_market_status_input!()
       assert_empty actual
     end
 
