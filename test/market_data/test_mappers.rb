@@ -149,5 +149,44 @@ module MarketData
       assert_equal response["date"][0], actual[:date]
       assert_equal response["status"][0], actual[:status]
     end
+    
+    def test_map_fields_for_index_quotes
+      response = {
+        "symbol" => ["VIX"],
+        "last" => [Time.now.to_i],
+        "change" => [4.3],
+        "changepct" => [0.15],
+        "updated" => [Time.now.to_i],
+        "52weekHigh" => [232.2],
+        "52weekLow" => [221.4],
+      }
+
+      actual = map_fields_for response, :index_quote
+      assert_equal response["symbol"][0], actual[:symbol]
+      assert_equal response["last"][0], actual[:last]
+      assert_equal response["change"][0], actual[:change]
+      assert_equal response["changepct"][0], actual[:change_pct]
+      assert_equal response["updated"][0], actual[:updated]
+      assert_equal response["52weekHigh"][0], actual[:high52]
+      assert_equal response["52weekLow"][0], actual[:low52]
+    end
+
+    def test_map_fields_for_index_candles
+      response = {
+        "symbol" => ["VIX"],
+        "o" => [2024],
+        "h" => ["Q4"],
+        "l" => [1.25],
+        "c" => [3.14],
+        "t" => [Time.now.to_i]
+      }
+      actual = map_fields_for response, :index_candle
+      assert_equal response["symbol"][0], actual[:symbol]
+      assert_equal response["o"][0], actual[:open]
+      assert_equal response["h"][0], actual[:high]
+      assert_equal response["l"][0], actual[:low]
+      assert_equal response["c"][0], actual[:close]
+      assert_equal response["t"][0], actual[:time]
+    end
   end
 end

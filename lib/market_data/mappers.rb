@@ -5,6 +5,7 @@ module MarketData
     include MarketData::Models
     SYMBOL_RESPONSE_KEY = "symbol"
     STATUS_RESPONSE_KEY = "s"
+    OPEN_RESPONSE_KEY = "o"
 
     def map_quote response, i=0
       Quote.new(**map_fields_for(response, :quote, i))
@@ -21,7 +22,7 @@ module MarketData
 
     def map_candles response, symbol
       ar = []
-      (0..(response["o"].size - 1)).each do |i|
+      (0..(response[OPEN_RESPONSE_KEY].size - 1)).each do |i|
         args = map_fields_for(response, :candle, i)
         args[:symbol] = symbol
         ar << Candle.new(**args)
@@ -53,6 +54,20 @@ module MarketData
         status: response["status"][0],
       )
     end
+    
+    def map_index_quote response
+      IndexQuote.new(**map_fields_for(response, :index_quote))
+    end
+
+    def map_index_candles response, symbol
+      ar = []
+      (0..(response[OPEN_RESPONSE_KEY].size - 1)).each do |i|
+        args = map_fields_for(response, :index_candle, i)
+        args[:symbol] = symbol
+        ar << Models::IndexCandle.new(**args)
+      end
+      ar
+    end
 
     def map_fields_for(response, kind, i=0)
       mapping = {}
@@ -61,6 +76,10 @@ module MarketData
         mapping = Constants::CANDLE_FIELD_MAPPING
       when :earning
         mapping = Constants::EARNING_FIELD_MAPPING
+      when :index_candle
+        mapping = Constants::INDEX_CANDLE_FIELD_MAPPING
+      when :index_quote
+        mapping = Constants::INDEX_QUOTE_FIELD_MAPPING
       when :quote
         mapping = Constants::QUOTE_FIELD_MAPPING
       else

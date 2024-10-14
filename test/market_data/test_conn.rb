@@ -60,5 +60,16 @@ module MarketData
       actual = @c.get_uri(path_hash)
       assert_equal "{}", actual
     end
+
+    def test_do_request_raises_if_do_connect_raises
+      @c.expects(:do_connect).raises(ClientError)
+      assert_raises(ClientError) { @c.do_request("", {})}
+    end
+    
+    def test_do_request_works_as_expected
+      @c.expects(:do_connect).returns({})
+      actual = @c.do_request("", {})
+      assert_equal({}, actual)
+    end
   end
 end

@@ -113,6 +113,17 @@ module MarketData
 
       return result.merge(response)
     end
+    
+    def validate_index_quote_input!(w52: nil)
+      if w52.nil? || !w52
+        return {}
+      end
+      {"52week" => w52}
+    end
+
+    def validate_index_candles_input!(resolution: nil, from: nil, to: nil, countback: nil)
+      validate_candles_input!(resolution: resolution, from: from, to: to, countback: countback)
+    end
 
     def validate_from_to_countback_strategy(
       from: nil, to: nil, countback: nil

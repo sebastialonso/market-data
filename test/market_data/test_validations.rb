@@ -123,6 +123,15 @@ module MarketData
       assert_equal args[:date], actual[:date]
       refute args.key? :to
     end
+    
+    def test_validate_index_quote_input_returns_with_arguments
+      actual = @s.validate_index_quote_input!(w52: true)
+      assert actual["52week"]
+    end
+
+    def test_validate_index_quote_input_returns_without_arguments
+      assert_empty @s.validate_index_quote_input!
+    end
 
     def test_time_valid_with_valid_string
       refute time_valid?("adas")
@@ -192,7 +201,9 @@ module MarketData
       assert_equal "daily", actual[:resolution]
     end
 
-    
-
+    def test_validate_index_candles_input_raises_when_options_are_invalid
+      @s.expects(:validate_candles_input!).raises(BadParameterError)
+      assert_raises(BadParameterError)  {@s.validate_index_candles_input! }
+    end
   end
 end

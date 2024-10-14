@@ -6,6 +6,18 @@ module MarketData
   module Conn
     include MarketData::Errors
 
+    def do_request path, query
+      path_hash = {
+        host: MarketData.base_host,
+        path: path,
+      }
+      path_hash[:query] = URI.encode_www_form(query) unless query.empty?
+        
+      do_connect(
+        get_uri path_hash
+      )
+    end
+
     def do_connect(path)
       begin
         conn = URI.open(path, get_auth_headers) 

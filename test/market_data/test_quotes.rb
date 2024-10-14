@@ -28,8 +28,8 @@ module MarketData
     def test_quote_without_parameters_works_as_expected
       expected_path_hash = { host: MarketData.base_host, path: Quotes.class_variable_get(:@@single) + AAPL_QUOTE}
       @q.expects(:validate_quotes_input!).returns({})
-      @q.expects(:get_uri).with(expected_path_hash).returns(STUB_GET_URI_RETURNS)
-      @q.expects(:do_connect).with(STUB_GET_URI_RETURNS).returns(STUB_DO_CONNECT_RETURNS)
+      @q.expects(:get_uri).with(expected_path_hash)
+      @q.expects(:do_connect).returns(STUB_DO_CONNECT_RETURNS)
       @q.expects(:map_quote).with(STUB_DO_CONNECT_RETURNS).returns(STUB_MAP_QUOTE_RETURNS)
 
       actual = @q.quote(AAPL_QUOTE, false, true)
@@ -45,8 +45,8 @@ module MarketData
         query: URI.encode_www_form({ extended: false, "52week" => true })
       }
       @q.expects(:validate_quotes_input!).returns({extended: false, "52week" => true})
-      @q.expects(:get_uri).with(expected_path_hash).returns(STUB_GET_URI_RETURNS)
-      @q.expects(:do_connect).with(STUB_GET_URI_RETURNS).returns(STUB_DO_CONNECT_RETURNS)
+      @q.expects(:get_uri).with(expected_path_hash)
+      @q.expects(:do_connect).returns(STUB_DO_CONNECT_RETURNS)
       @q.expects(:map_quote).with(STUB_DO_CONNECT_RETURNS).returns(STUB_MAP_QUOTE_RETURNS)
 
       actual = @q.quote(AAPL_QUOTE, true, false)
@@ -68,8 +68,8 @@ module MarketData
         query: URI.encode_www_form({ extended: false, symbols: "AAPL,AMD" })
       }
 
-      @q.expects(:get_uri).with(expected_path_hash).returns(STUB_GET_URI_RETURNS)
-      @q.expects(:do_connect).with(STUB_GET_URI_RETURNS).returns(STUB_DO_CONNECT_RETURNS)
+      @q.expects(:get_uri).with(expected_path_hash)
+      @q.expects(:do_connect).returns(STUB_DO_CONNECT_RETURNS)
       @q.expects(:map_bulk_quotes).with(STUB_DO_CONNECT_RETURNS).returns(STUB_MAP_BULK_QUOTES_RETURNS)
       
       actual = @q.bulk_quotes([AAPL_QUOTE, AMD_QUOTE])
@@ -94,8 +94,8 @@ module MarketData
       }
 
       @q.expects(:validate_candles_input!).returns(opts.except(:resolution))
-      @q.expects(:get_uri).with(expected_path_hash).returns(STUB_GET_URI_RETURNS)
-      @q.expects(:do_connect).with(STUB_GET_URI_RETURNS).returns(STUB_DO_CONNECT_RETURNS)
+      @q.expects(:get_uri).with(expected_path_hash)
+      @q.expects(:do_connect).returns(STUB_DO_CONNECT_RETURNS)
       @q.expects(:map_candles).with(STUB_DO_CONNECT_RETURNS, AAPL_QUOTE).returns(generate_candle_elements(opts[:countback]))
 
       actual = @q.candles(AAPL_QUOTE, opts)
@@ -119,8 +119,8 @@ module MarketData
       }
 
       map_bulk_candles_returns = generate_candle_elements(2)
-      @q.expects(:get_uri).with(expected_path_hash).returns(STUB_GET_URI_RETURNS)
-      @q.expects(:do_connect).with(STUB_GET_URI_RETURNS).returns(STUB_DO_CONNECT_RETURNS)
+      @q.expects(:get_uri).with(expected_path_hash)
+      @q.expects(:do_connect).returns(STUB_DO_CONNECT_RETURNS)
       @q.expects(:map_bulk_candles).with(STUB_DO_CONNECT_RETURNS).returns(map_bulk_candles_returns)
 
       actual = @q.bulk_candles([AAPL_QUOTE, AMD_QUOTE])
@@ -143,8 +143,8 @@ module MarketData
         query: URI.encode_www_form({ date: opts[:date] })
       }
       @q.expects(:validate_earnings_input!).returns(opts)
-      @q.expects(:get_uri).with(expected_path_hash).returns(STUB_GET_URI_RETURNS)
-      @q.expects(:do_connect).with(STUB_GET_URI_RETURNS).returns(STUB_DO_CONNECT_RETURNS)
+      @q.expects(:get_uri).with(expected_path_hash)
+      @q.expects(:do_connect).returns(STUB_DO_CONNECT_RETURNS)
       @q.expects(:map_earning).with(STUB_DO_CONNECT_RETURNS).returns(STUB_MAP_EARNINGS_RETURNS)
 
       actual = @q.earnings(AAPL_QUOTE, opts)

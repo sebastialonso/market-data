@@ -51,5 +51,22 @@ module MarketData
       date: "date",
       status: "status"
     }
+    INDEX_QUOTE_FIELD_MAPPING = {
+      symbol: "symbol",
+      last: "last",
+      change: "change",
+      change_pct: "changepct",
+      high52: "52weekHigh",
+      low52: "52weekLow",
+      updated: "updated",
+    }
+    INDEX_CANDLE_FIELD_MAPPING = {
+      symbol: "symbol",
+      open: "o",
+      close: "c",
+      low: "l",
+      high: "h",
+      time: "t",
+    }
   end
 end
