@@ -34,3 +34,7 @@
 ## [0.4.0] - 2024-10-14
 
 - Add support for Markets status endpoint under the `market_status` method
+
+## [0.5.0] - 2024-10-15
+
+- Add support for Indexes endpoints under `index_quote` and `ìndex_candles`

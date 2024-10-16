@@ -2,7 +2,7 @@
 
 A Ruby wrapper for the [MarketData API](https://www.marketdata.app/docs/api).
 
-![coverage](https://img.shields.io/badge/coverage%3A-87.77%25-yellow.svg)
+![coverage](https://img.shields.io/badge/coverage%3A-87.68%25-yellow.svg)
 
 ## Installation
 
@@ -139,11 +139,11 @@ From Stocks endpoints:
 - [X] Earnings
 
 From Markets endpoints:
-- [ ] Status
+- [X] Status
 
 From Indices endpoints:
-- [ ] Quotes
-- [ ] Candles
+- [X] Quotes
+- [X] Candles
 
 From Stocks endpoints:
 - [ ] Support for optional parameters for Candles
