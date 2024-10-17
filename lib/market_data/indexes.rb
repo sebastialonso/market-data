@@ -4,6 +4,7 @@ module MarketData
     include MarketData::Mappers
     include MarketData::Validations
 
+    # TODO use delayed interpolation when building path
     @@quotes = "/v1/indices/quotes/"
     @@candles = "/v1/indices/candles/"
 

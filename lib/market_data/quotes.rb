@@ -6,10 +6,11 @@ require 'market_data/validations'
 module MarketData
   module Quotes
     include MarketData::Mappers
-    include MarketData::Errors
+    include MarketData::Errors # <- TODO: remove this
     include MarketData::Conn
     include MarketData::Validations
 
+    # TODO use delayed interpolation when building path
     @@single = "/v1/stocks/quotes/"
     @@bulk = "/v1/stocks/bulkquotes/"
     @@candles = "/v1/stocks/candles/"
@@ -52,6 +53,7 @@ module MarketData
       )
     end
 
+    
     def earnings(symbol, opts = {from: nil, to: nil, countback: nil, date: nil, report: nil})
       query = validate_earnings_input!(**opts)
 

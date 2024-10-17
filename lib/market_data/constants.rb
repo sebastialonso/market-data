@@ -9,6 +9,14 @@ module MarketData
     MONTH_31 = DAY * 31
     YEAR = DAY * 365
 
+    SIDE_CALL = "Call"
+    SIDE_PUT = "Put"
+
+    RANGE_ALL = "all"
+    RANGE_OTM = "otm"
+    RANGE_ITM = "itm"
+    RANGE_ALLOWED = [RANGE_ALL, RANGE_OTM, RANGE_ITM]
+
     EARNING_FIELD_MAPPING = {
       symbol: "symbol",
       fiscal_year: "fiscalYear",
@@ -67,6 +75,55 @@ module MarketData
       low: "l",
       high: "h",
       time: "t",
+    }
+    OPTION_CHAIN_FIELD_MAPPING = {
+      option_symbol: "optionSymbol",
+      underlying: "underlying",
+      expiration: "expiration",
+      side: "side",
+      strike: "strike",
+      first_traded: "firstTraded",
+      dte: "dte",
+      ask: "ask",
+      ask_size: "askSize",
+      bid: "bidSize",
+      mid: "mid",
+      last: "last",
+      volume: "volume",
+      open_interest: "openInterest",
+      underlying_price: "underlyingPrice",
+      in_the_money: "inTheMoney",
+      intrinsic_value: "intrinsicValue",
+      extrinsic_value: "extrinsicValue",
+      updated: "updated",
+      iv: "iv",
+      delta: "delta",
+      gamma: "gamma",
+      theta: "theta",
+      vega: "vega",
+      rho: "rho"
+    }
+    OPTION_QUOTE_FIELD_MAPPING = {
+      option_symbol: "optionSymbol",
+      ask: "ask",
+      ask_size: "askSize",
+      bid: "bid",
+      bid_size: "bidSize",
+      mid: "mid",
+      last: "last",
+      volume: "volume",
+      open_interest: "openInterest",
+      underlying_price: "underlyingPrice",
+      in_the_money: "inTheMoney",
+      updated: "updated",
+      iv: "iv",
+      delta: "delta",
+      gamma: "gamma",
+      theta: "theta",
+      vega: "vega",
+      rho: "rho",
+      intrinsic_value: "intrinsicValue",
+      extrinsic_value: "extrinsicValue"
     }
   end
 end

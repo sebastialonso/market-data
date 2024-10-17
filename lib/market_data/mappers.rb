@@ -6,6 +6,7 @@ module MarketData
     SYMBOL_RESPONSE_KEY = "symbol"
     STATUS_RESPONSE_KEY = "s"
     OPEN_RESPONSE_KEY = "o"
+    OPTION_SYMBOL_RESPONSE_KEY = "optionSymbol"
 
     def map_quote response, i=0
       Quote.new(**map_fields_for(response, :quote, i))
@@ -69,19 +70,55 @@ module MarketData
       ar
     end
 
+    def map_expirations response
+      Models::OptExpirations.new(
+        expirations: response["expirations"],
+        updated: response["updated"]
+      )
+    end
+
+    def map_lookup response
+      response["optionSymbol"]
+    end
+
+    def map_strike response
+      date_map = response.reject { |el| !el.match(/\d{4}-\d{2}-\d{2}/) }
+      Models::OptStrike.new(
+        updated: response["updated"],
+        strikes: date_map,
+      )
+    end
+
+    def map_option_chain response
+      ar = []
+      (0..(response[OPTION_SYMBOL_RESPONSE_KEY].size - 1)).each do |i|
+        args = map_fields_for(response, :option_chain, i)
+        ar << Models::OptChain.new(**args)
+      end
+      ar
+    end
+
+    def map_option_quote response
+      args = map_fields_for(response, :option_quote)
+      Models::OptQuote.new(**args)
+    end
+
     def map_fields_for(response, kind, i=0)
-      mapping = {}
-      case kind
+      mapping = case kind
       when :candle
-        mapping = Constants::CANDLE_FIELD_MAPPING
+        Constants::CANDLE_FIELD_MAPPING
       when :earning
-        mapping = Constants::EARNING_FIELD_MAPPING
+        Constants::EARNING_FIELD_MAPPING
       when :index_candle
-        mapping = Constants::INDEX_CANDLE_FIELD_MAPPING
+        Constants::INDEX_CANDLE_FIELD_MAPPING
       when :index_quote
-        mapping = Constants::INDEX_QUOTE_FIELD_MAPPING
+        Constants::INDEX_QUOTE_FIELD_MAPPING
+      when :option_chain
+        Constants::OPTION_CHAIN_FIELD_MAPPING
+      when :option_quote
+        Constants::OPTION_QUOTE_FIELD_MAPPING
       when :quote
-        mapping = Constants::QUOTE_FIELD_MAPPING
+        Constants::QUOTE_FIELD_MAPPING
       else
         raise BadParameterError.new("unrecognized model for mapping: #{kind}")
       end

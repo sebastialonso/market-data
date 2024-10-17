@@ -31,6 +31,10 @@ module MarketData
       URI::HTTPS.build(path_hash).to_s
     end
 
+    def encode_uri_component str
+      URI.encode_uri_component str
+    end
+
     def get_auth_headers
       { "authorization" => "Bearer #{get_token}"}
     end

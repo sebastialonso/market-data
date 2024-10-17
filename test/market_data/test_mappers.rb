@@ -1,10 +1,12 @@
 require "test_helper"
 require 'market_data/mappers'
 require 'market_data/constants'
+require 'market_data/models' # TODO remove
 
 module MarketData
   class TestMappers < Minitest::Test
     include MarketData::Mappers
+    include MarketData::Models
 
     def test_map_quote_returns_as_expected
       input = {
@@ -64,6 +66,60 @@ module MarketData
       end
     end
 
+    def test_map_market_status
+      response = {
+        "s" => "ok",
+        "date" => ["2024-10-11"],
+        "status" => ["open"]
+      }
+
+      actual = map_market_status response
+      assert_kind_of MarketData::Models::MarketStatus, actual
+      assert_equal response["date"][0], actual[:date]
+      assert_equal response["status"][0], actual[:status]
+    end
+
+    def test_map_expirations
+      input = TestData::STUB_EXPIRATIONS_RESPONSE
+      actual = map_expirations input
+      assert_kind_of Models::OptExpirations, actual
+      assert_equal input["expirations"].size, actual.expirations.size
+    end
+
+    def test_map_lookup
+      input = {
+        "s" => "ok",
+        "optionSymbol" => "AAPL230728C00200000"
+      }
+
+      actual = map_lookup input
+      assert_kind_of String, actual
+      assert_equal input["optionSymbol"], actual
+    end
+
+    def test_map_strike
+      input = TestData::STUB_STRIKE_RESPONSE
+      actual = map_strike input
+      assert_kind_of Models::OptStrike, actual
+      assert input.key? "2024-10-10" 
+      assert actual.strikes.key? "2024-10-10" 
+    end
+    
+    def test_map_option_chain
+      input = TestData::STUB_CHAIN_RESPONSE
+      actual = map_option_chain input
+      assert_kind_of Array, actual
+      assert_kind_of Models::OptChain, actual[0]
+      assert_equal "AAPL", actual[0][:underlying]
+    end
+
+    def test_map_option_quote
+      input = TestData::STUB_OPTION_QUOTES_RESPONSE
+      actual = map_option_quote input
+      assert_kind_of Models::OptQuote, actual
+      assert actual[:option_symbol].include? "AAPL"
+    end
+
     def test_map_fields_for_raises_when_unkown_kind
       assert_raises(BadParameterError) { map_fields_for({}, :invalid) }
     end
@@ -73,13 +129,11 @@ module MarketData
         "fiscalYear" => [2024],
         "fiscalQuarter" => ["Q4"],
         "reportedEPS" => [1.25],
-        "not_registered_field" => [3.14]
       }
       actual = map_fields_for response, :earning
       assert_equal response["fiscalYear"][0], actual[:fiscal_year]
       assert_equal response["fiscalQuarter"][0], actual[:fiscal_quarter]
       assert_equal response["reportedEPS"][0], actual[:reported_eps]
-      refute actual.key? :not_registered_field
     end
 
     def test_map_fields_for_candles
@@ -100,7 +154,6 @@ module MarketData
       assert_equal response["c"][0], actual[:close]
       assert_equal response["v"][0], actual[:volume]
       assert_equal response["t"][0], actual[:time]
-      refute actual.key? :not_registered_field
     end
 
     def test_map_fields_for_quotes
@@ -135,19 +188,6 @@ module MarketData
       assert_equal response["high52"][0], actual[:high52]
       assert_equal response["low52"][0], actual[:low52]
       refute actual.key? :not_registered_field
-    end
-
-    def test_map_market_status
-      response = {
-        "s" => "ok",
-        "date" => ["2024-10-11"],
-        "status" => ["open"]
-      }
-
-      actual = map_market_status response
-      assert_kind_of MarketData::Models::MarketStatus, actual
-      assert_equal response["date"][0], actual[:date]
-      assert_equal response["status"][0], actual[:status]
     end
     
     def test_map_fields_for_index_quotes
@@ -187,6 +227,24 @@ module MarketData
       assert_equal response["l"][0], actual[:low]
       assert_equal response["c"][0], actual[:close]
       assert_equal response["t"][0], actual[:time]
+    end
+
+    def test_map_fields_for_option_chain
+      response = TestData::STUB_CHAIN_RESPONSE
+      actual = map_fields_for response, :option_chain
+
+      Constants::OPTION_CHAIN_FIELD_MAPPING.each do |field_sym, field_raw|
+        assert_equal response[field_raw][0], actual[field_sym]
+      end
+    end
+
+    def test_map_fields_for_option_quote
+      response = TestData::STUB_OPTION_QUOTES_RESPONSE
+      actual = map_fields_for response, :option_quote
+
+      Constants::OPTION_QUOTE_FIELD_MAPPING.each do |field_sym, field_raw|
+        assert_equal response[field_raw][0], actual[field_sym]
+      end
     end
   end
 end

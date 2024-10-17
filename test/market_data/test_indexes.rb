@@ -1,4 +1,4 @@
-require 'market_data/indexes'
+require 'market_data/indexes' # TODO remove
 
 module MarketData
   class TestIndexes < Minitest::Test
