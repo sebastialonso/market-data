@@ -6,7 +6,7 @@ require 'market_data/validations'
 module MarketData
   module Quotes
     include MarketData::Mappers
-    include MarketData::Errors
+    include MarketData::Errors # <- TODO: remove this
     include MarketData::Conn
     include MarketData::Validations
 

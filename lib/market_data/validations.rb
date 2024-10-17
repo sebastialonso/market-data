@@ -125,6 +125,28 @@ module MarketData
       validate_candles_input!(resolution: resolution, from: from, to: to, countback: countback)
     end
 
+    def validate_expirations_input!(symbol: nil, strike: nil, date: nil)
+      result = {}
+      if !symbol.kind_of? String
+        raise BadParameterError.new("symbol must be a string: found #{symbol}")
+      end
+      if symbol.empty?
+        raise BadParameterError.new("symbol must be present: found empty string")
+      end
+
+      if !date.nil? && !time_valid?(date)
+        raise BadParameterError.new("date is not valid")
+      end
+      result.merge!({date: date}) unless date.nil?
+      
+      if !strike.nil? && !strike.kind_of?(Numeric)
+        raise BadParameterError.new("strike must be number, found: #{strike}")
+      end
+      result.merge!({strike: strike}) unless strike.nil?
+
+      return result
+    end
+
     def validate_from_to_countback_strategy(
       from: nil, to: nil, countback: nil
     )

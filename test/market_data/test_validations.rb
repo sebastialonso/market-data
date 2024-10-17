@@ -1,9 +1,10 @@
 require "test_helper"
-require "market_data/validations"
 
 module MarketData
   class TestValidations < Minitest::Test
     include MarketData::Validations
+    AAPL_QUOTE = "AAPL"
+    STUB_STRIKE = 1
 
     class UsingValidations
       include MarketData::Validations  
@@ -15,19 +16,19 @@ module MarketData
       @to = Time.now
       @countback = 3
       @date = Time.now
-      @report = "2023-Q4"
+      @report = "2023-4"
       @s = UsingValidations.new
       @ftc = {from: @from, to: @to, countback: @countback}
     end
 
     def test_validate_quotes_input_work_as_expected
-      actual = validate_quotes_input!(symbol: "AAPL", w52: true, extended: true)
+      actual = validate_quotes_input!(symbol: AAPL_QUOTE, w52: true, extended: true)
       refute actual.key? :extended
       assert actual["52week"]
     end
 
     def test_validate_quotes_input_populates_extend
-      actual = validate_quotes_input!(symbol: "AAPL", extended: false)
+      actual = validate_quotes_input!(symbol: AAPL_QUOTE, extended: false)
       assert actual.key? :extended
       refute actual[:extended]
       refute actual["52week"]
@@ -35,18 +36,18 @@ module MarketData
 
     def test_validate_bulk_quotes_input_raises_when_symbols_invalid
       assert_raises(BadParameterError) {@s.validate_bulk_quotes_input!(symbols: [])}
-      assert_raises(BadParameterError) {@s.validate_bulk_quotes_input!(symbols: "AAPL")}
+      assert_raises(BadParameterError) {@s.validate_bulk_quotes_input!(symbols: AAPL_QUOTE)}
     end
 
     def test_validate_bulk_quotes_input_ignores_symbols_if_snaphot_is_present
-      actual = validate_bulk_quotes_input!(symbols: ["AAPL", "AMD"], snapshot: true)
+      actual = validate_bulk_quotes_input!(symbols: [AAPL_QUOTE, "AMD"], snapshot: true)
       assert actual[:snapshot]
       refute actual[:extended]
       assert_nil actual[:symbols]
     end
 
     def test_validate_bulk_quotes_input_works_as_expected
-      actual = validate_bulk_quotes_input!(symbols: ["AAPL", "AMD"], extended: true)
+      actual = validate_bulk_quotes_input!(symbols: [AAPL_QUOTE, "AMD"], extended: true)
       refute actual[:snapshot]
       assert actual[:extended]
       assert_equal "AAPL,AMD", actual[:symbols]
@@ -196,11 +197,11 @@ module MarketData
     def test_validate_bulk_candles_input_raises_when_symbols_are_invalid
       @s.expects(:validate_resolution).twice.returns([:valid, {}])
       assert_raises(BadParameterError) {@s.validate_bulk_candles_input!(resolution: "D", symbols: [])}
-      assert_raises(BadParameterError) {@s.validate_bulk_candles_input!(resolution: "D", symbols: "AAPL")}
+      assert_raises(BadParameterError) {@s.validate_bulk_candles_input!(resolution: "D", symbols: AAPL_QUOTE)}
     end
 
     def test_validate_bulk_candles_input_works_as_expected
-      actual = @s.validate_bulk_candles_input!(symbols: ["AAPL", "AMD"], resolution: "daily")
+      actual = @s.validate_bulk_candles_input!(symbols: [AAPL_QUOTE, "AMD"], resolution: "daily")
 
       assert_equal 2, actual.size
       assert_equal "AAPL,AMD", actual[:symbols]
@@ -210,6 +211,38 @@ module MarketData
     def test_validate_index_candles_input_raises_when_options_are_invalid
       @s.expects(:validate_candles_input!).raises(BadParameterError)
       assert_raises(BadParameterError)  {@s.validate_index_candles_input! }
+    end
+
+    def test_validate_expirations_input_raises_when_invalid_symbol
+      # first: not a string
+      assert_raises(BadParameterError) { @s.validate_expirations_input!(**{symbol: 2})}
+      assert_raises(BadParameterError) { @s.validate_expirations_input!(**{symbol: ["SYM"]})}
+      # second: empty string
+      assert_raises(BadParameterError) { @s.validate_expirations_input!(**{symbol: ""})}
+    end
+
+    def test_validate_expirations_input_raises_when_invalid_date
+      @s.expects(:time_valid?).returns(false)
+      assert_raises(BadParameterError) { @s.validate_expirations_input!(**{date: Time.now, symbol: AAPL_QUOTE})}
+    end
+
+    def test_validate_expirations_input_raises_when_invalid_strike
+      assert_raises(BadParameterError) { @s.validate_expirations_input!(**{strike: AAPL_QUOTE, symbol: AAPL_QUOTE, date: @date.to_i})}
+    end
+
+    def test_validate_expirations_input_runs_as_expected
+      actual = @s.validate_expirations_input!(**{symbol: AAPL_QUOTE})
+      assert_empty actual
+      actual = @s.validate_expirations_input!(**{symbol: AAPL_QUOTE, strike: STUB_STRIKE})
+      assert_equal 1, actual.keys.size
+      assert actual.key? :strike
+      assert_equal actual[:strike], STUB_STRIKE
+      actual = @s.validate_expirations_input!(**{symbol: AAPL_QUOTE, date: @date.to_i})
+      assert_equal 1, actual.keys.size
+      assert actual.key? :date
+      assert_equal actual[:date], @date.to_i
+      actual = @s.validate_expirations_input!(**{symbol: AAPL_QUOTE, date: @date.to_i, strike: STUB_STRIKE})
+      assert_equal 2, actual.keys.size
     end
   end
 end

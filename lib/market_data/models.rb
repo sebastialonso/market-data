@@ -21,5 +21,7 @@ module MarketData
     IndexQuote = Struct.new(*Constants::INDEX_QUOTE_FIELD_MAPPING.keys)
 
     IndexCandle = Struct.new(*Constants::INDEX_CANDLE_FIELD_MAPPING.keys)
+
+    OptExpirations = Struct.new(:expirations, :updated)
   end
 end

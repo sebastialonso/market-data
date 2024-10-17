@@ -1,5 +1,5 @@
 require "test_helper"
-require 'market_data/markets'
+require 'market_data/markets' # TODO remove
 
 module MarketData
   class TestMarkets < Minitest::Test

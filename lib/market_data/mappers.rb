@@ -69,6 +69,13 @@ module MarketData
       ar
     end
 
+    def map_expirations response
+      Models::OptExpirations.new(
+        expirations: response["expirations"],
+        updated: response["updated"]
+      )
+    end
+
     def map_fields_for(response, kind, i=0)
       mapping = {}
       case kind

@@ -1,10 +1,12 @@
 require "test_helper"
 require 'market_data/mappers'
 require 'market_data/constants'
+require 'market_data/models' # TODO remove
 
 module MarketData
   class TestMappers < Minitest::Test
     include MarketData::Mappers
+    include MarketData::Models
 
     def test_map_quote_returns_as_expected
       input = {
@@ -64,6 +66,13 @@ module MarketData
       end
     end
 
+    def test_map_expirations
+      input = TestData::STUB_EXPIRATIONS_RESPONSE
+      actual = map_expirations input
+      assert_kind_of Models::OptExpirations, actual
+      assert_equal input["expirations"].size, actual.expirations.size
+    end
+    
     def test_map_fields_for_raises_when_unkown_kind
       assert_raises(BadParameterError) { map_fields_for({}, :invalid) }
     end
