@@ -145,7 +145,7 @@ module MarketData
       @q.expects(:validate_earnings_input!).returns(opts)
       @q.expects(:get_uri).with(expected_path_hash)
       @q.expects(:do_connect).returns(STUB_DO_CONNECT_RETURNS)
-      @q.expects(:map_earning).with(STUB_DO_CONNECT_RETURNS).returns(STUB_MAP_EARNINGS_RETURNS)
+      @q.expects(:map_earnings).with(STUB_DO_CONNECT_RETURNS).returns(STUB_MAP_EARNINGS_RETURNS)
 
       actual = @q.earnings(AAPL_QUOTE, opts)
       assert_equal STUB_MAP_EARNINGS_RETURNS.symbol, actual.symbol

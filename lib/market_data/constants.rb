@@ -44,8 +44,8 @@ module MarketData
       change_pct: "changepct",
       volume: "volume",
       updated: "updated",
-      high52: "high52",
-      low52: "low52",
+      high52: "52weekHigh",
+      low52: "52weekLow",
     }
     MARKET_STATUS_FIELD_MAPPING = {
       date: "date",

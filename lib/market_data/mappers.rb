@@ -40,7 +40,7 @@ module MarketData
       h
     end
 
-    def map_earning response
+    def map_earnings response
       ar = []
       (0..(response[SYMBOL_RESPONSE_KEY].size - 1)).each do |i|
         ar << Earning.new(**map_fields_for(response, :earning, i))
