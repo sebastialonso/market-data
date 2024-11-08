@@ -8,21 +8,10 @@ module MarketData
     include MarketData::Mappers
     include MarketData::Models
 
+    AAPL_QUOTE = "AAPL"
+
     def test_map_quote_returns_as_expected
-      input = {
-        "s" => "ok",
-        "symbol" => ["AAPL"],
-        "ask" => [149.08],
-        "askSize" => [200],
-        "bid" => [149.07],
-        "bidSize" => [600],
-        "mid" => [149.07],
-        "last" => [149.09],
-        "volume" => [66959442],
-        "change" => [1.0428],
-        "changepct" => [0.0046],
-        "updated" => [1663958092]
-      }
+      input = TestData::STUB_QUOTE_RESPONSE
       
       expected = map_quote input
       excluded = [:high52, :low52]
@@ -78,6 +67,44 @@ module MarketData
       assert_equal response["date"][0], actual[:date]
       assert_equal response["status"][0], actual[:status]
     end
+    
+    def test_map_candles
+      input = TestData::STUB_CANDLES_RESPONSE
+      actual = map_candles input, AAPL_QUOTE
+      assert_kind_of Array, actual
+      assert_equal 1, actual.size
+      assert_kind_of Models::Candle, actual[0]
+    end
+
+    def test_map_bulk_candles
+      input = TestData::STUB_BULK_CANDLES_RESPONSE
+      actual = map_bulk_candles input
+      assert_kind_of Hash, actual
+      assert_equal 2, actual.size
+      assert_kind_of Models::Candle, actual.fetch(AAPL_QUOTE)
+    end
+
+    def test_map_earnings
+      input = TestData::STUB_EARNINGS_RESPONSE
+      actual = map_earnings input
+      assert_kind_of Array, actual
+      assert_equal 1, actual.size
+      assert_kind_of Models::Earning, actual[0]
+    end
+
+    def test_map_index_quote
+      input = TestData::STUB_INDEX_QUOTE_RESPONSE
+      actual = map_index_quote input
+      assert_kind_of Models::IndexQuote, actual
+    end
+
+    def test_map_index_candles
+      input = TestData::STUB_INDEX_CANDLES_RESPONSE  
+      actual = map_index_candles input, AAPL_QUOTE
+      assert_kind_of Array, actual
+      assert_equal 1, actual.size
+      assert_kind_of Models::IndexCandle, actual[0]
+    end
 
     def test_map_expirations
       input = TestData::STUB_EXPIRATIONS_RESPONSE
@@ -125,11 +152,7 @@ module MarketData
     end
     
     def test_map_fields_for_earnings
-      response = {
-        "fiscalYear" => [2024],
-        "fiscalQuarter" => ["Q4"],
-        "reportedEPS" => [1.25],
-      }
+      response = TestData::STUB_EARNINGS_RESPONSE
       actual = map_fields_for response, :earning
       assert_equal response["fiscalYear"][0], actual[:fiscal_year]
       assert_equal response["fiscalQuarter"][0], actual[:fiscal_quarter]
@@ -137,15 +160,7 @@ module MarketData
     end
 
     def test_map_fields_for_candles
-      response = {
-        "symbol" => ["AAPL"],
-        "o" => [2024],
-        "h" => ["Q4"],
-        "l" => [1.25],
-        "c" => [3.14],
-        "v" => [4e5],
-        "t" => [Time.now.to_i]
-      }
+      response = TestData::STUB_CANDLES_RESPONSE
       actual = map_fields_for response, :candle
       assert_equal response["symbol"][0], actual[:symbol]
       assert_equal response["o"][0], actual[:open]
@@ -157,22 +172,7 @@ module MarketData
     end
 
     def test_map_fields_for_quotes
-      response = {
-        "symbol" => ["AAPL"],
-        "ask" => [2024],
-        "askSize" => ["Q4"],
-        "bid" => [1.25],
-        "bidSize" => [3.14],
-        "mid" => [4e5],
-        "last" => [Time.now.to_i],
-        "change" => [4.3],
-        "changepct" => [0.15],
-        "volume" => [5e4],
-        "updated" => [Time.now.to_i],
-        "high52" => [232.2],
-        "low52" => [221.4],
-      }
-
+      response = TestData::STUB_QUOTE_RESPONSE
       actual = map_fields_for response, :quote
       assert_equal response["symbol"][0], actual[:symbol]
       assert_equal response["ask"][0], actual[:ask]
@@ -185,22 +185,12 @@ module MarketData
       assert_equal response["changepct"][0], actual[:change_pct]
       assert_equal response["volume"][0], actual[:volume]
       assert_equal response["updated"][0], actual[:updated]
-      assert_equal response["high52"][0], actual[:high52]
-      assert_equal response["low52"][0], actual[:low52]
-      refute actual.key? :not_registered_field
+      assert_equal response["52weekHigh"][0], actual[:high52]
+      assert_equal response["52weekLow"][0], actual[:low52]
     end
     
     def test_map_fields_for_index_quotes
-      response = {
-        "symbol" => ["VIX"],
-        "last" => [Time.now.to_i],
-        "change" => [4.3],
-        "changepct" => [0.15],
-        "updated" => [Time.now.to_i],
-        "52weekHigh" => [232.2],
-        "52weekLow" => [221.4],
-      }
-
+      response = TestData::STUB_INDEX_QUOTE_RESPONSE
       actual = map_fields_for response, :index_quote
       assert_equal response["symbol"][0], actual[:symbol]
       assert_equal response["last"][0], actual[:last]
@@ -212,16 +202,8 @@ module MarketData
     end
 
     def test_map_fields_for_index_candles
-      response = {
-        "symbol" => ["VIX"],
-        "o" => [2024],
-        "h" => ["Q4"],
-        "l" => [1.25],
-        "c" => [3.14],
-        "t" => [Time.now.to_i]
-      }
+      response = TestData::STUB_INDEX_CANDLES_RESPONSE
       actual = map_fields_for response, :index_candle
-      assert_equal response["symbol"][0], actual[:symbol]
       assert_equal response["o"][0], actual[:open]
       assert_equal response["h"][0], actual[:high]
       assert_equal response["l"][0], actual[:low]

@@ -57,7 +57,7 @@ module MarketData
     def earnings(symbol, opts = {from: nil, to: nil, countback: nil, date: nil, report: nil})
       query = validate_earnings_input!(**opts)
 
-      map_earning(
+      map_earnings(
         do_request @@earnings + symbol, query
       )
     end
