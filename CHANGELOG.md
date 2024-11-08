@@ -38,3 +38,8 @@
 ## [0.5.0] - 2024-10-15
 
 - Add support for Indexes endpoints under `index_quote` and `ìndex_candles`
+
+## [0.6.0] - 2024-11-08
+
+- Add support for all Options endpoints: `expirations`, `lookup`, `strikes`, `chain`, `option_quote`
+- Improve mappers coverage

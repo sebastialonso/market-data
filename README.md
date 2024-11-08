@@ -2,7 +2,7 @@
 
 A Ruby wrapper for the [MarketData API](https://www.marketdata.app/docs/api).
 
-![coverage](https://img.shields.io/badge/coverage%3A-87.68%25-yellow.svg)
+![coverage](https://img.shields.io/badge/coverage%3A-96.72%25-green.svg)
 
 ## Installation
 
@@ -145,9 +145,21 @@ From Indices endpoints:
 - [X] Quotes
 - [X] Candles
 
+From Options endpoints:
+- [X] Expirations
+- [X] Lookup
+- [X] Strikes
+- [X] Chain
+- [X] Quotes
+
+From Mutual Funds endpoints:
+- [ ] Candles
+
 From Stocks endpoints:
-- [ ] Support for optional parameters for Candles
-- [ ] Support for optional parameters for Bulk Candles
+- [ ] Rewrite Stocks endpoints methods to new validation scheme
+
+Other:
+- [ ] [Cache feed](https://www.marketdata.app/docs/api/universal-parameters/feed#cached-feed) support 
 
 
 ## Tests
